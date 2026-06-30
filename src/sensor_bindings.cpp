@@ -62,7 +62,8 @@ PYBIND11_MODULE(sensor_capture, m) {
         .def(py::init<sl_oc::VERBOSITY>(),
              py::arg("verbose") = sl_oc::VERBOSITY::INFO)
         .def("get_device_list",
-             &sl_oc::sensors::SensorCapture::getDeviceList)
+             &sl_oc::sensors::SensorCapture::getDeviceList,
+             py::arg("refresh") = false)
         .def("initialize_sensors",
              &sl_oc::sensors::SensorCapture::initializeSensors,
              py::arg("device_id"))

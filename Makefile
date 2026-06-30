@@ -34,7 +34,7 @@ update:
 udev: clone
 	@echo "🔌 Installing udev rule (requires sudo)..."
 	# might cause an error
-	@cd $(ZED_OC_DIR)/udev && bash install_udev_rule.sh
+	# @cd $(ZED_OC_DIR)/udev && bash install_udev_rule.sh
 # <---- Add udev rule for USB HID sensor access
 
 # ----> Build the upstream C++ library only (no examples, video disabled to save time)
