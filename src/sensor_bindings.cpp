@@ -25,7 +25,9 @@ PYBIND11_MODULE(sensor_capture, m) {
         .def_readonly("gX",        &sl_oc::sensors::data::Imu::gX)
         .def_readonly("gY",        &sl_oc::sensors::data::Imu::gY)
         .def_readonly("gZ",        &sl_oc::sensors::data::Imu::gZ)
-        .def_readonly("valid",     &sl_oc::sensors::data::Imu::valid)
+          .def_property_readonly("valid", [](const sl_oc::sensors::data::Imu &data) {
+               return static_cast<int>(data.valid);
+          })
         .def("__repr__", [](const sl_oc::sensors::data::Imu &d) {
             return "<ImuData ts=" + std::to_string(d.timestamp) + ">";
         });
@@ -37,7 +39,9 @@ PYBIND11_MODULE(sensor_capture, m) {
         .def_readonly("mX",        &sl_oc::sensors::data::Magnetometer::mX)
         .def_readonly("mY",        &sl_oc::sensors::data::Magnetometer::mY)
         .def_readonly("mZ",        &sl_oc::sensors::data::Magnetometer::mZ)
-        .def_readonly("valid",     &sl_oc::sensors::data::Magnetometer::valid);
+          .def_property_readonly("valid", [](const sl_oc::sensors::data::Magnetometer &data) {
+               return static_cast<int>(data.valid);
+          });
     // <---- Bind Magnetometer data struct
 
     // ----> Bind Environment data struct
@@ -46,7 +50,9 @@ PYBIND11_MODULE(sensor_capture, m) {
         .def_readonly("press",     &sl_oc::sensors::data::Environment::press)
         .def_readonly("temp",      &sl_oc::sensors::data::Environment::temp)
         .def_readonly("humid",     &sl_oc::sensors::data::Environment::humid)
-        .def_readonly("valid",     &sl_oc::sensors::data::Environment::valid);
+          .def_property_readonly("valid", [](const sl_oc::sensors::data::Environment &data) {
+               return static_cast<int>(data.valid);
+          });
     // <---- Bind Environment data struct
 
     // ----> Bind Temperature data struct
@@ -54,7 +60,9 @@ PYBIND11_MODULE(sensor_capture, m) {
         .def_readonly("timestamp",   &sl_oc::sensors::data::Temperature::timestamp)
         .def_readonly("temp_left",   &sl_oc::sensors::data::Temperature::temp_left)
         .def_readonly("temp_right",  &sl_oc::sensors::data::Temperature::temp_right)
-        .def_readonly("valid",       &sl_oc::sensors::data::Temperature::valid);
+          .def_property_readonly("valid", [](const sl_oc::sensors::data::Temperature &data) {
+               return static_cast<int>(data.valid);
+          });
     // <---- Bind Temperature data struct
 
     // ----> Bind SensorCapture class

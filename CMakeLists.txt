@@ -16,29 +16,22 @@ if(NOT pybind11_FOUND)
 endif()
 # <---- Find Python and pybind11
 
-# ----> Find system-installed zed-open-capture (after `make install_zed_oc`)
-find_path(ZED_OC_INCLUDE_DIR
-    NAMES sensorcapture.hpp
-    PATHS /usr/local/include /usr/include
-    PATH_SUFFIXES zed-open-capture
-)
+# ----> Find the vendored zed-open-capture build
+set(ZED_OC_SOURCE_DIR ${CMAKE_SOURCE_DIR}/third_party/zed-open-capture)
+set(ZED_OC_INCLUDE_DIR ${ZED_OC_SOURCE_DIR}/include)
+set(ZED_OC_LIB ${ZED_OC_SOURCE_DIR}/build/libzed_open_capture.so)
 
-find_library(ZED_OC_LIB
-    NAMES zed_open_capture libzed_open_capture
-    PATHS /usr/local/lib /usr/lib
-)
-
-message(STATUS "Found zed-open-capture headers: ${ZED_OC_INCLUDE_DIR}")
-message(STATUS "Found zed-open-capture library:  ${ZED_OC_LIB}")
-
-if(NOT ZED_OC_INCLUDE_DIR OR NOT ZED_OC_LIB)
+if(NOT EXISTS ${ZED_OC_INCLUDE_DIR}/sensorcapture.hpp OR NOT EXISTS ${ZED_OC_LIB})
     message(FATAL_ERROR
-        "zed-open-capture not found.\n"
-        "  Headers found: ${ZED_OC_INCLUDE_DIR}\n"
-        "  Library found: ${ZED_OC_LIB}\n"
-        "Run 'make install_zed_oc' first.")
+        "Vendored zed-open-capture not found.\n"
+        "  Headers expected at: ${ZED_OC_INCLUDE_DIR}/sensorcapture.hpp\n"
+        "  Library expected at: ${ZED_OC_LIB}\n"
+        "Run 'make build_zed_oc' first.")
 endif()
-# <---- Find system-installed zed-open-capture
+
+message(STATUS "Using zed-open-capture headers: ${ZED_OC_INCLUDE_DIR}")
+message(STATUS "Using zed-open-capture library:  ${ZED_OC_LIB}")
+# <---- Find the vendored zed-open-capture build
 
 # ----> Required system deps (used internally by zed-open-capture)
 find_package(Threads REQUIRED)
@@ -63,6 +56,7 @@ pybind11_add_module(sensor_capture src/sensor_bindings.cpp)
 
 target_compile_definitions(sensor_capture PRIVATE
     SENSORS_MOD_AVAILABLE
+    VIDEO_MOD_AVAILABLE
 )
 
 target_include_directories(sensor_capture PRIVATE
@@ -78,23 +72,33 @@ target_link_libraries(sensor_capture PRIVATE
 )
 
 target_compile_features(sensor_capture PRIVATE cxx_std_14)
+
+set_target_properties(sensor_capture PROPERTIES
+    BUILD_RPATH ${ZED_OC_SOURCE_DIR}/build
+    INSTALL_RPATH "$ORIGIN"
+)
 # <---- Build the extension module
 
-# ----> Install into Python's site-packages
+# ----> Install into the current user's Python site-packages
 execute_process(
     COMMAND ${Python3_EXECUTABLE} -c
-        "import site; print(site.getsitepackages()[0])"
-    OUTPUT_VARIABLE PYTHON_SITE_PACKAGES
+        "import site; print(site.getusersitepackages())"
+    OUTPUT_VARIABLE PYTHON_USER_SITE_PACKAGES
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
 install(TARGETS sensor_capture
-    LIBRARY DESTINATION ${PYTHON_SITE_PACKAGES}
+    LIBRARY DESTINATION ${PYTHON_USER_SITE_PACKAGES}
 )
-# <---- Install into Python's site-packages
+
+install(FILES ${ZED_OC_LIB}
+    DESTINATION ${PYTHON_USER_SITE_PACKAGES}
+)
+# <---- Install into the current user's Python site-packages
 
 # ----> Install the Python wrapper package alongside the extension
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/python/zed_sensors
-    DESTINATION ${PYTHON_SITE_PACKAGES}
+    DESTINATION ${PYTHON_USER_SITE_PACKAGES}
 )
 # <---- Install the Python wrapper package
+    

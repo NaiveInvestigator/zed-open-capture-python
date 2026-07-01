@@ -4,6 +4,8 @@
 from zed_sensors import ZedSensors
 
 def main():
+    print("hewwo")
+
     sens = ZedSensors(verbosity="info")
     sens.initialize_sensors()  # auto-picks first available device
 

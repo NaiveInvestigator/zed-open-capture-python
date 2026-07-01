@@ -14,7 +14,7 @@ This will:
 1. Install system prerequisites (`make deps`, one-time, needs sudo)
 2. Clone and build `zed-open-capture`
 3. Install the udev rule for USB HID sensor access (needs sudo, replug camera after)
-4. Build and install the Python bindings + wrapper
+4. Build and install the Python bindings + wrapper, along with the vendored `zed-open-capture` shared library, into your user-local Python site-packages
 
 ## Usage
 

@@ -7,7 +7,7 @@ ZED_OC_DIR    := $(THIRD_PARTY)/zed-open-capture
 ZED_OC_REPO   := https://github.com/stereolabs/zed-open-capture.git
 ZED_OC_BUILD  := $(ZED_OC_DIR)/build
 
-all: clone udev build_zed_oc install_zed_oc build install
+all: clone udev build_zed_oc build install
 
 # ----> Install system prerequisites
 deps:
@@ -54,8 +54,8 @@ install_zed_oc: build_zed_oc
 	@echo "✅ zed-open-capture installed system-wide"
 # <---- Install it system-wide
 
-# ----> Build the Python bindings against the now system-installed library
-build: install_zed_oc
+# ----> Build the Python bindings against the local vendored library
+build: build_zed_oc
 	@mkdir -p $(BUILD_DIR)
 	@cd $(BUILD_DIR) && cmake .. \
 		-DCMAKE_BUILD_TYPE=Release \
