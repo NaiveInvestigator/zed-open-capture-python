@@ -7,14 +7,15 @@ ZED_OC_DIR    := $(THIRD_PARTY)/zed-open-capture
 ZED_OC_REPO   := https://github.com/stereolabs/zed-open-capture.git
 ZED_OC_BUILD  := $(ZED_OC_DIR)/build
 
-all: clone udev build_zed_oc build install
+all: deps clone udev build_zed_oc build install
 
 # ----> Install system prerequisites
 deps:
 	@echo "📦 Installing prerequisites..."
 	sudo apt update
 	sudo apt install -y build-essential cmake \
-		libusb-1.0-0-dev libhidapi-libusb0 libhidapi-dev
+		libusb-1.0-0-dev libhidapi-libusb0 libhidapi-dev \
+		libopencv-dev libopencv-viz-dev
 # <---- Install system prerequisites
 
 # ----> Clone upstream repo if not already present
@@ -33,8 +34,7 @@ update:
 # ----> Add udev rule for USB HID sensor access
 udev: clone
 	@echo "🔌 Installing udev rule (requires sudo)..."
-	# might cause an error
-	# @cd $(ZED_OC_DIR)/udev && bash install_udev_rule.sh
+	@cd $(ZED_OC_DIR)/udev && sudo bash install_udev_rule.sh
 # <---- Add udev rule for USB HID sensor access
 
 # ----> Build the upstream C++ library only (no examples, video disabled to save time)
